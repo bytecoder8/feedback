@@ -15,8 +15,43 @@ datasource db {
 
 model User {
   id         String   @id @default(uuid())
-  email      String  @unique
+  email      String   @unique
   password   String
   avatar     String?
   created_at DateTime @default(now())
+
+  posts Post[]
+}
+
+model Post {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  author    User   @relation(fields: [author_id], references: [id])
+  author_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  category    Category @relation(fields: [category_id], references: [id])
+  status      Status   @relation(fields: [status_id], references: [id])
+  category_id String
+  status_id   String
+}
+
+model Category {
+  id         String   @id @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+
+  Post Post[]
+}
+
+model Status {
+  id         String   @id @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+
+  Post Post[]
 }
