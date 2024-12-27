@@ -1,6 +1,5 @@
 import z from 'zod'
 
-
 const input = {
   jwtSecretKey: process.env.JWT_SECRET_KEY
 }
