@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "allowUnreachableCode": false,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./*"],
+      "@types": ["./types"]
+    },
+    "types": ["@types/node"]
+  },
+  "include": [
+    "src/**/*",
+  ],
+}
