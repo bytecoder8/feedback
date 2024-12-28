@@ -8,16 +8,16 @@ import { createSchema, updateSchema } from "@/schemas/post"
 
 export const router = express.Router()
 
-router.get('/', PostController.getAllPosts)
-router.get('/:id', PostController.getPostById)
+router.get('/posts', PostController.getAllPosts)
+router.get('/posts/:id', PostController.getPostById)
 
-router.post('/', authenticateToken, validate({
+router.post('/posts', authenticateToken, validate({
   body: createSchema
 }), PostController.createPost)
 
-router.put('/:id', authenticateToken, validate({
+router.put('/posts/:id', authenticateToken, validate({
   params: { id: z.string() },
   body: updateSchema
 }), PostController.updatePost)
 
-router.delete('/:id', authenticateToken, PostController.deletePost)
+router.delete('/posts/:id', authenticateToken, PostController.deletePost)

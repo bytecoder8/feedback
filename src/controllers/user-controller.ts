@@ -1,17 +1,15 @@
 import type { Request, Response } from "express"
 import bcrypt from 'bcrypt'
-import z from 'zod'
 
 import { prisma } from "@/lib/prisma-client"
 import config from "@/config"
-import { loginSchema, publicUserSchema, registerSchema, updateSchema } from '@/schemas/user'
+import { publicUserSchema } from '@/schemas/user'
 import { generateTokens } from "@/utils"
 
 
 const UserController = {
   async register(req: Request, res: Response) {
     try {
-      registerSchema.parse(req.body)
       const { email, password } = req.body
 
       const existingUser = await prisma.user.findUnique({where: { email }})
@@ -31,19 +29,12 @@ const UserController = {
 
       return res.json({ user: publicUserSchema.parse(user), tokens })
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          error: "Validation error",
-          errors: error.issues
-        })
-      }
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
     }
   },
   async login(req: Request, res: Response) {
     try {
-      loginSchema.parse(req.body)
       let { email, password } = req.body
 
       const user = await prisma.user.findUnique({ where: { email } })
@@ -59,12 +50,6 @@ const UserController = {
       const tokens = generateTokens({userId: user.id}, config.jwtSecretKey)
       return res.json({ user: publicUserSchema.parse(user), tokens })
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          error: "Validation error",
-          errors: error.issues
-        })
-      }
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
     }
@@ -86,10 +71,6 @@ const UserController = {
   async getUserById(req: Request, res: Response) {
     const { id } = req.params
     
-    if (!id) {
-      return res.status(400).json({ error: "id is required" })
-    }
-
     try {
       const user = await prisma.user.findUnique({
         where: { id },
@@ -116,7 +97,6 @@ const UserController = {
     }
     
     try {
-      updateSchema.parse(req.body)
       const { email } = req.body
       
       if (email) {
@@ -137,12 +117,6 @@ const UserController = {
       user['password'] = ''
       return res.json(user)
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          error: "Validation error",
-          errors: error.issues
-        })
-      }
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
     }
