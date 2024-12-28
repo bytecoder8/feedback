@@ -26,8 +26,6 @@ const PostController = {
     }
 
     try {
-      createSchema.parse(data)
-
       await prisma.category.findUniqueOrThrow({
         where: {
           id: category_id
@@ -39,12 +37,6 @@ const PostController = {
       })
       return res.json(postSchema.parse(post))
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          error: "Validation error",
-          errors: error.issues
-        })
-      }
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
     }
@@ -69,10 +61,6 @@ const PostController = {
 
   async getPostById(req: Request, res: Response) {
     const { id } = req.params
-
-    if (!id) {
-      return res.status(400).json({ error: "id is required" })
-    }
 
     try {
       const post = await prisma.post.findUnique({
@@ -100,12 +88,7 @@ const PostController = {
       description: req.body.description
     }
 
-    if (!id) {
-      return res.status(400).json({ error: "id is required" })
-    }
-
     try {
-      updateSchema.parse(data)
       const post = await prisma.post.findUnique({
         where: { id }
       })
@@ -124,12 +107,6 @@ const PostController = {
       })
       return res.json(postSchema.parse(updatedPost))
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          error: "Validation error",
-          errors: error.issues
-        })
-      }
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
     }
@@ -138,10 +115,6 @@ const PostController = {
   async deletePost(req: Request, res: Response) {
     const { id } = req.params
     const { userId } = res.locals.user
-
-    if (!id) {
-      return res.status(400).json({ error: "id is required" })
-    }
 
     try {
       const post = await prisma.post.findUnique({

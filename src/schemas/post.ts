@@ -5,8 +5,6 @@ import { publicUserSchema } from './user'
 export const createSchema = z.object({
   title: z.string().trim().min(3),
   description: z.string().trim().min(3),
-  author_id: z.string(),
-  status_id: z.string(),
   category_id: z.string(),
 })
 export const updateSchema = z.object({
