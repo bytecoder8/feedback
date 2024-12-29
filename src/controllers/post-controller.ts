@@ -1,7 +1,6 @@
 import type { Request, Response } from "express"
-import z from 'zod'
 import { prisma } from "@/lib/prisma-client"
-import { createSchema, postFullSchema, postListSchema, postSchema, updateSchema } from "@/schemas/post"
+import { postFullSchema, postListSchema, postSchema } from "@/schemas/post"
 
 
 const PostController = {
