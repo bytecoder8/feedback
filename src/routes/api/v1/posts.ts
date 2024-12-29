@@ -4,6 +4,7 @@ import validate from "@/lib/zod-express-validator"
 import { PostController } from "@/controllers/post-controller"
 import { authenticateToken } from "@/middleware/auth"
 import { createSchema, updateSchema } from "@/schemas/post"
+import { UpvoteController } from "@/controllers/upvote-controller"
 
 
 export const router = express.Router()
@@ -21,3 +22,11 @@ router.put('/posts/:id', authenticateToken, validate({
 }), PostController.updatePost)
 
 router.delete('/posts/:id', authenticateToken, PostController.deletePost)
+
+router.post('/posts/:id/upvote', authenticateToken, validate({
+  params: { id: z.string() }
+}), UpvoteController.create)
+
+router.delete('/posts/:id/upvote', authenticateToken, validate({
+  params: { id: z.string() }
+}), UpvoteController.remove)

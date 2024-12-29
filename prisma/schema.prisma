@@ -20,7 +20,8 @@ model User {
   avatar     String?
   created_at DateTime @default(now())
 
-  posts Post[]
+  posts   Post[]
+  upvotes Upvote[]
 }
 
 model Post {
@@ -38,6 +39,8 @@ model Post {
   status      Status   @relation(fields: [status_id], references: [id])
   category_id String
   status_id   String
+
+  upvotes Upvote[]
 }
 
 model Category {
@@ -54,4 +57,17 @@ model Status {
   created_at DateTime @default(now())
 
   Post Post[]
+}
+
+model Upvote {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  post    Post   @relation(fields: [post_id], references: [id])
+  post_id String
+
+  created_at DateTime @default(now())
+
+  @@unique([user_id, post_id])
 }
