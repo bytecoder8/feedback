@@ -3,13 +3,15 @@ import z from 'zod'
 import validate from "@/lib/zod-express-validator"
 import { PostController } from "@/controllers/post-controller"
 import { authenticateToken } from "@/middleware/auth"
-import { createSchema, updateSchema } from "@/schemas/post"
+import { createSchema, postsQuerySchema, updateSchema } from "@/schemas/post"
 import { UpvoteController } from "@/controllers/upvote-controller"
 
 
 export const router = express.Router()
 
-router.get('/posts', PostController.getAllPosts)
+router.get('/posts', validate({
+  query: postsQuerySchema,
+}), PostController.getAllPosts)
 router.get('/posts/:id', PostController.getPostById)
 
 router.post('/posts', authenticateToken, validate({

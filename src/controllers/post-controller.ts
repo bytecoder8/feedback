@@ -1,12 +1,12 @@
 import type { Request, Response } from "express"
 import { prisma } from "@/lib/prisma-client"
-import { postFullSchema, postListSchema, postSchema } from "@/schemas/post"
+import { PostCreateBody, PostQuery, PostUpdateBody, postFullSchema, postListSchema, postSchema } from "@/schemas/post"
 
 
 const PostController = {
   async createPost(req: Request, res: Response) {
 
-    const { title, description, category_id } = req.body
+    const { title, description, category_id } = req.body as PostCreateBody
 
     // Find first available status
     const firstStatus = await prisma.status.findFirstOrThrow({
@@ -43,13 +43,41 @@ const PostController = {
 
   async getAllPosts(req: Request, res: Response) {
     try {
+      const { sort_field, sort_dir, categories, statuses } = req.query as PostQuery
+      // Setting sorting up
+      let orderBy = {}
+      if (sort_field === 'upvotes') {
+        orderBy = {
+          "upvotes": {
+            _count: sort_dir
+          }
+        }
+      } else {
+        orderBy = { [sort_field] : sort_dir }
+      }
+
+      // Setting filtering
+      let where: {[key: string]: {}} = {}
+      if (categories.length > 0) {
+        where.category_id = {
+          in: categories
+        }
+      }
+      if (statuses.length > 0) {
+        where.status_id = {
+          in: statuses
+        }
+      }
+
       const posts = await prisma.post.findMany({
         include: {
           author: true,
+          status: true,
+          category: true,
+          upvotes: true,
         },
-        orderBy: {
-          created_at: 'desc'
-        }
+        orderBy,
+        where
       })
       return res.json(postListSchema.parse(posts))
     } catch (error) {
@@ -82,10 +110,8 @@ const PostController = {
   async updatePost(req: Request, res: Response) {
     const { id } = req.params
     const { userId } = res.locals.user
-    const data = {
-      title: req.body.title,
-      description: req.body.description
-    }
+
+    const { title, description } = req.body as PostUpdateBody
 
     try {
       const post = await prisma.post.findUnique({
@@ -102,7 +128,9 @@ const PostController = {
 
       const updatedPost = await prisma.post.update({
         where: { id },
-        data
+        data: {
+          title, description
+        }
       })
       return res.json(postSchema.parse(updatedPost))
     } catch (error) {
