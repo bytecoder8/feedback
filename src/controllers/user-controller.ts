@@ -25,7 +25,7 @@ const UserController = {
           password: hashedPassword,
         }
       })
-      const tokens = generateTokens({ userId: user.id }, config.jwtSecretKey)
+      const tokens = generateTokens({ userId: user.id }, config.jwtSecretKey, config.jwtAccessTokenExpiresIn)
 
       return res.json({ user: publicUserSchema.parse(user), tokens })
     } catch (error) {
@@ -47,7 +47,7 @@ const UserController = {
         return res.status(400).json({ error: "Incorrect user or password" })
       }
   
-      const tokens = generateTokens({userId: user.id}, config.jwtSecretKey)
+      const tokens = generateTokens({userId: user.id}, config.jwtSecretKey, config.jwtAccessTokenExpiresIn)
       return res.json({ user: publicUserSchema.parse(user), tokens })
     } catch (error) {
       console.error(error)

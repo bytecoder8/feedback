@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { TokenExpiredError } from 'jsonwebtoken'
 import { type UserPayload, userPayloadSchema } from '../types'
 import config from '../config'
 
@@ -9,12 +9,16 @@ const authenticateToken: RequestHandler = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1]
   
   if (!token) {
-    return res.status(401).json({ error: "Unauthorized" })
+    return res.status(403).json({ error: "Unauthorized: No token provided" })
   }
 
   jwt.verify(token, config.jwtSecretKey, (err, user) => {
     if (err) {
-      return res.status(403).json({ error: "Invalid Token" })
+      if (err instanceof TokenExpiredError) {
+        return res.status(401).json({ error: "Access Token expired" })
+      } else {
+        return res.status(401).json({ error: "Invalid Token" })
+      }
     }
     const validationResult = userPayloadSchema.safeParse(user)
     if (!validationResult.success) {
