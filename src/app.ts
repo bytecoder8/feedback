@@ -6,7 +6,14 @@ import 'module-alias/register'
 
 import { router } from '@/routes/api/v1'
 
+process.on('uncaughtException', err => { 
+  console.error(err)
+})
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled rejection:', reason)
+  console.error('Promise:', promise)
+})
 
 const PORT = process.env.PORT || 4000
 const app = express()
