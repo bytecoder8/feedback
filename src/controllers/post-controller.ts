@@ -1,6 +1,7 @@
 import type { Request, Response } from "express"
 import { prisma } from "@/lib/prisma-client"
 import { PostCreateBody, PostQuery, PostUpdateBody, postFullSchema, postListSchema, postSchema } from "@/schemas/post"
+import { clamp } from "@/utils"
 
 
 const PostController = {
@@ -43,8 +44,8 @@ const PostController = {
 
   async getAllPosts(req: Request, res: Response) {
     try {
-      const { sort_field, sort_dir, categories, statuses } = req.query as PostQuery
-      // Setting sorting up
+      const { sort_field, sort_dir, categories, statuses, page } = req.query as PostQuery
+      // Sorting
       let orderBy = {}
       if (sort_field === 'upvotes') {
         orderBy = {
@@ -56,7 +57,7 @@ const PostController = {
         orderBy = { [sort_field] : sort_dir }
       }
 
-      // Setting filtering
+      // Filtering
       let where: {[key: string]: {}} = {}
       if (categories.length > 0) {
         where.category_id = {
@@ -69,6 +70,16 @@ const PostController = {
         }
       }
 
+      // Pagination
+      const postsCount = await prisma.post.count({
+        orderBy,
+        where
+      })
+
+      const perPage = 5
+      const maxPage = Math.ceil(postsCount / perPage)
+      let currentPage = clamp(parseInt(page) || 1, 1, maxPage)
+
       const posts = await prisma.post.findMany({
         include: {
           author: true,
@@ -77,9 +88,18 @@ const PostController = {
           upvotes: true,
         },
         orderBy,
-        where
+        where,
+        skip: (currentPage - 1) * perPage,
+        take: perPage
       })
-      return res.json(postListSchema.parse(posts))
+
+      return res.json({
+        posts: postListSchema.parse(posts),
+        total: postsCount,
+        page: currentPage,
+        max_page: maxPage,
+        per_page: perPage,
+      })
     } catch (error) {
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })

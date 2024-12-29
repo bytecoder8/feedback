@@ -16,7 +16,8 @@ export const postsQuerySchema = z.object({
   sort_field: z.enum(['created_at', 'upvotes']).default('created_at'),
   sort_dir: z.enum(['asc', 'desc']).default('desc'),
   categories: z.array(z.string()).default([]),
-  statuses: z.array(z.string()).default([])
+  statuses: z.array(z.string()).default([]),
+  page: z.string().default('1'),
 })
 
 export const postSchema = z.object({
