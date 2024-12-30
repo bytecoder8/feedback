@@ -220,10 +220,52 @@ router.put('/posts/:id', authenticateToken, validate({
  */
 router.delete('/posts/:id', authenticateToken, PostController.deletePost)
 
+/**
+ * @swagger
+ * /posts/{id}/upvote:
+ *  post:
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     security:
+ *       - bearerAuth: []
+ *     produces:
+ *       - application/json
+ *     responses:
+ *        200:
+ *           content:
+ *              application/json:
+ *                schema:
+ *                    $ref: '#/components/schemas/ResponseStatus'
+ */
 router.post('/posts/:id/upvote', authenticateToken, validate({
   params: { id: z.string() }
 }), UpvoteController.create)
 
+/**
+ * @swagger
+ * /posts/{id}/upvote:
+ *  delete:
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     security:
+ *       - bearerAuth: []
+ *     produces:
+ *       - application/json
+ *     responses:
+ *        200:
+ *           content:
+ *              application/json:
+ *                schema:
+ *                    $ref: '#/components/schemas/ResponseStatus'
+ */
 router.delete('/posts/:id/upvote', authenticateToken, validate({
   params: { id: z.string() }
 }), UpvoteController.remove)
