@@ -77,7 +77,10 @@ const PostController = {
       })
 
       const perPage = 5
-      const maxPage = Math.ceil(postsCount / perPage)
+      let maxPage = Math.ceil(postsCount / perPage)
+      if (maxPage < 1) {
+        maxPage = 1
+      }
       let currentPage = clamp(parseInt(page) || 1, 1, maxPage)
 
       const posts = await prisma.post.findMany({
