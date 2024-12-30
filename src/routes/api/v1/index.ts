@@ -7,7 +7,7 @@ import { router as categories } from "./categories"
 
 export const router = express.Router()
 
-router.use('/', users)
-router.use('/', posts)
-router.use('/', statuses)
-router.use('/', categories)
+router.use(users)
+router.use(posts)
+router.use(statuses)
+router.use(categories)

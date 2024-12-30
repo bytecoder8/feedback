@@ -5,6 +5,7 @@ import 'dotenv/config'
 import 'module-alias/register'
 
 import { router } from '@/routes/api/v1'
+import { swagger } from './routes/api/v1/swagger'
 
 process.on('uncaughtException', err => { 
   console.error(err)
@@ -23,7 +24,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(logger('dev'))
 
-app.use('/api', router)
+app.use('/api/v1', router)
+app.use(swagger)
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
