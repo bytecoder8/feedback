@@ -12,7 +12,7 @@ export const options: Options = {
     },
     servers: [{ url: '/api/v1' }]
   },
-  apis: ['./src/routes/api/v1/**/*.ts'],
+  apis: ['./routes/api/v1/**/*.js'],
 }
 
 export const swagger = express.Router()
