@@ -3,14 +3,14 @@ import bcrypt from 'bcrypt'
 
 import { prisma } from "@/lib/prisma-client"
 import config from "@/config"
-import { publicUserSchema } from '@/schemas/user'
+import { LoginUser, RegisterUser, UpdateUser, publicUserSchema } from '@/schemas/user'
 import { generateTokens } from "@/utils"
 
 
 const UserController = {
   async register(req: Request, res: Response) {
     try {
-      const { email, password } = req.body
+      const { email, password, avatar } = req.body as RegisterUser
 
       const existingUser = await prisma.user.findUnique({where: { email }})
       if (existingUser) {
@@ -23,6 +23,7 @@ const UserController = {
         data: {
           email,
           password: hashedPassword,
+          avatar
         }
       })
       const tokens = generateTokens({ userId: user.id }, config.jwtSecretKey, config.jwtAccessTokenExpiresIn)
@@ -35,7 +36,7 @@ const UserController = {
   },
   async login(req: Request, res: Response) {
     try {
-      let { email, password } = req.body
+      let { email, password } = req.body as LoginUser
 
       const user = await prisma.user.findUnique({ where: { email } })
       if (!user) {
@@ -62,7 +63,7 @@ const UserController = {
       if (!user) {
         return res.status(400).json({ error: "Couldn't find the user" })
       }
-      return res.json({ ...publicUserSchema.parse(user) })
+      return res.json(publicUserSchema.parse(user))
     } catch (error) {
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
@@ -74,17 +75,13 @@ const UserController = {
     try {
       const user = await prisma.user.findUnique({
         where: { id },
-        select: {
-          id: true,
-          email: true
-        }
       })
 
       if (!user) {
         return res.status(404).json({ error: "User not found" })
       }
 
-      return res.json({ ...publicUserSchema.parse(user) })
+      return res.json(publicUserSchema.parse(user))
     } catch (error) {
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
@@ -97,7 +94,7 @@ const UserController = {
     }
     
     try {
-      const { email } = req.body
+      const { email, avatar } = req.body as UpdateUser
       
       if (email) {
         const existingUser = await prisma.user.findUnique({
@@ -112,10 +109,10 @@ const UserController = {
         where: { id },
         data: {
           email: email || undefined,
+          avatar: avatar || undefined
         }
       })
-      user['password'] = ''
-      return res.json(user)
+      return res.json(publicUserSchema.parse(user))
     } catch (error) {
       console.error(error)
       return res.status(500).json({ error: "Internal server error" })
