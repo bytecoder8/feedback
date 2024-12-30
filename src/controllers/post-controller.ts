@@ -114,6 +114,9 @@ const PostController = {
         where: { id },
         include: {
           author: true,
+          status: true,
+          category: true,
+          upvotes: true
         },
       })
 

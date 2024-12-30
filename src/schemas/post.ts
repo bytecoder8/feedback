@@ -1,5 +1,8 @@
 import z from 'zod'
 import { publicUserSchema } from './user'
+import { categorySchema } from './category'
+import { statusSchema } from './status'
+import { upvoteSchema } from './upvote'
 
 
 export const createSchema = z.object({
@@ -33,9 +36,9 @@ export const postSchema = z.object({
 
 export const postFullSchema = postSchema.merge(z.object({
   author: publicUserSchema,
-  category: z.any(),
-  status: z.any(),
-  upvotes: z.any(),
+  category: categorySchema,
+  status: statusSchema,
+  upvotes: z.array(upvoteSchema),
 }))
 
 export const postListSchema = z.array(postFullSchema)

@@ -7,6 +7,23 @@ import { router as categories } from "./categories"
 
 export const router = express.Router()
 
+/**
+ * @openapi
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
+ *   schemas:
+ *     ResponseStatus:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ */
+
 router.use(users)
 router.use(posts)
 router.use(statuses)
