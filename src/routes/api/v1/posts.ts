@@ -96,6 +96,33 @@ export const router = express.Router()
  * @swagger
  * /posts:
  *  get:
+ *     parameters:
+ *       - in: query
+ *         name: sort_field
+ *         type: string
+ *         enum: ['created_at', 'upvotes']
+ *       - in: query
+ *         name: sort_dir
+ *         type: string
+ *         enum: ['asc', 'desc']
+ *       - in: query
+ *         name: page
+ *         type: string
+ *         description: page number from 1
+ *       - in: query
+ *         name: categories[]
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: categories ids
+ *       - in: query
+ *         name: statuses[]
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: statuses ids
  *     produces:
  *       - application/json
  *     responses:

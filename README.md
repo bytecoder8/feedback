@@ -8,9 +8,9 @@ Allows you to create and vote on proposals
 
 `docker compose up` (for postgres instance)
 
-`prisma db push`
+`npx prisma db push`
 
-`prisma generate`
+`npx prisma generate`
 
 
 ## Running
