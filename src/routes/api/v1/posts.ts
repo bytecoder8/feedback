@@ -172,8 +172,14 @@ router.post('/posts', authenticateToken, validate({
 
 /**
  * @swagger
- * /posts/:
+ * /posts/{id}:
  *  put:
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
  *     requestBody:
  *         in: body
  *         content:
